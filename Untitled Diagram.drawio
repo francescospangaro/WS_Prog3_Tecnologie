@@ -1,1 +1,65 @@
-<mxfile host="www.draw.io" modified="2020-01-24T11:31:41.740Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="XETJfdOzFMtcqoe-Oalx" version="12.5.6" type="device"><diagram id="jOwxQRzLdsGZAGW3T-rJ" name="Page-1">7VjbUtswEP0az8BDO76G8OgkQOmUDiXMUB4VW9hqbctIcm5f35UtxxcFCC2EmUxfPNKxtNLunqO1bDjjdHnBUB5f0RAnhm2GS8OZGLZ96trwlMCqAgaWWwERI2EFWQ0wJWusQFOhBQkx7wwUlCaC5F0woFmGA9HBEGN00R32QJPuqjmKsAZMA5To6B0JRVyhQ/ukwb9gEsX1ytbgtHqTonqw8oTHKKSLFuScGc6YUSqqVroc40TGro5LNe/8ibebjTGciV0mPD4uooubmX93eeHex+dRejW8+uSpvYlV7TAOwX/VpUzENKIZSs4adMRokYVYWjWh14z5RmkOoAXgLyzESiUTFYICFIs0UW/xkoifcvpnT/XuW28mS2W57KxUp9qn3NyT7iuI04IF+Bmf7U3wgbSYpliwFcxjOEGCzLv2kaJPtBm3mXpNCaxsm4rptqPyvOr1axMCsQgLNavJk88YWrWG5XIAf3odZ9hd57SX9ReGW4Pnx/fd6I2HRrXhutcKYQOVzHsFC+sz4T8N/5mG3mA/NHSdV9GwP/wlGvbd2AsNVamao6RQ4b/xp9ejs5ube42fAi9Fl05cMPobj2lCGSAZzSRJH0iS9CCUkCiDbgCMwYCP5pgJAhXHVy9SEoYlwxcxEXiao5JGCyivGuvVhsEAXj5PSJ1o9QHhOp1Ieyrwi6baWa7C4lals3u8alOzlabXZ2HwEWfBG+ra2U95Gb6PrvvruN4ehOdowpumiIk8loo5WOWd9CLtblGevU/luVoa/CDAnDekOsg8WP2S+eFH4ImWCJTnhlxukMiYzxi0Itk68rOQUTBmm1NRhIQeH26e+noZbEmT5elp8t4rTUMtTQFNiwwitCYHfXJ5PcG43pZMbBFM/1v0zTJxqhcQzMBF6VX5hOI7o6zOixlCKZZo1UQzxA84W9qnw451ZvBe2bIsLV0cZ5wycrhJ8NyXNbPXGlOflN3bzujS/27Iv2mp1AYnXOAUQYuCjOTnK9VLkI5MEHxeg5FY2mhdocyHIisVyIyxY/hmqT54zGRGpUq5FK1u7+rH7e1GyYwEGDIBw85JNieItfSMSGlEUckUDKWQWmjdXZ5f7rJz4FH3TIDPdiDSeq08okAcfxdDmOOoIDNlDtIhp/OAkVxsIpPgKJJuVB5tLe/Kr6PGExmL4/6+SAaPr2iOdtDP7rpgmJM1mpWmpArU1QHseiPDm0hbcI/i1ZXKehuZuMPebVQTiWNuUYn1F5VFRn7z87W6yTR/sJ2zPw==</diagram></mxfile>
+<mxfile host="www.draw.io" modified="2020-01-29T09:44:48.331Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="beKHmGG7pcFCNmuqsZY9" version="12.6.1" type="github">
+  <diagram id="jOwxQRzLdsGZAGW3T-rJ" name="Page-1">
+    <mxGraphModel dx="942" dy="565" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="qqwgGRbAWIG4YhFgmM8M-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="230" y="230" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="380" y="90"/>
+              <mxPoint x="380" y="160"/>
+              <mxPoint x="230" y="160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="qqwgGRbAWIG4YhFgmM8M-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="230" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="430" y="90"/>
+              <mxPoint x="430" y="160"/>
+              <mxPoint x="560" y="160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-2" value="RASPBERRY" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="343" y="50" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="qqwgGRbAWIG4YhFgmM8M-3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="230" y="280" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="230" y="450"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-3" value="Smartphone" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="70" y="440" width="120" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-4" value="AccessPoint" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="160" y="250" width="140" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-7" value="app &lt;br&gt;(Android Studio)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="70" y="460" width="115" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-8" value="comunicazione" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="245" width="110" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-9" value="Server per elaborazione dati e database" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="230" y="20" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-11" value="sensori" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="540" y="245" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="qqwgGRbAWIG4YhFgmM8M-15" value="RASBIAN come sistema operativo&lt;br&gt;&lt;br&gt;Dato che RASPBERRY funzionerà da broker serve&lt;br&gt;MQTT per ricevere/inviare dati ai sensori tramite WIFI&lt;br&gt;&lt;br&gt;file database realizzato con:&lt;br&gt;&lt;br&gt;eseguibile dello script che legge/riceve &lt;br&gt;dati (tramite MQTT) realizzato in Java" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="483" y="5" width="300" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="YnlkfsgVDuz-QR-ksa33-1" value="IMPORTANTE!&lt;br&gt;&lt;br&gt;RASPBERRY deve assolutamente avere&lt;br&gt;un indirizzo STATICO" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="553" y="310" width="230" height="60" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
