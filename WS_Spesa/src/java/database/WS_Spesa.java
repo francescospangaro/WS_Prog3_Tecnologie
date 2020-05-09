@@ -15,6 +15,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,12 +34,11 @@ import org.xml.sax.SAXException;
  *
  * @author Galimberti Francesco
  */
-@WebServlet(name = "Spesa", urlPatterns = {"/Spesa"})
-public class Spesa extends HttpServlet {
+public class WS_Spesa extends HttpServlet {
 
     final private String driver = "com.mysql.jdbc.Driver";
     final private String dbms_url = "jdbc:mysql://localhost/";
-    final private String database = "test_database";
+    final private String database = "db_spesa";
     final private String user = "root";
     final private String password = "";
     private Connection spesa;
@@ -101,77 +102,104 @@ public class Spesa extends HttpServlet {
      * @throws IOException if an I/O error occurs
      *
      * examples of use: 
-     *    http://localhost:8080/phoneBook/gigi
-     *    http://localhost:8080/phoneBook/lucia?descr=si
+     *    http://localhost:8080/spesa/utenti
+     *    http://localhost:8080/spesa/utenti?username=fraGali
+     *    http://localhost:8080/spesa/utenti?nome=Francesco
+     *    http://localhost:8080/spesa/utenti?cognome=Caso
+     *    http://localhost:8080/spesa/utenti?regione=Lombardia
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String name;
-        String number;
-        String description = "";
+        String richiesta;
         String url;
-        String[] url_section;
+        String[] url_section;        
+        
         // verifica stato connessione a DBMS
         if (!connected) {
             response.sendError(500, "DBMS server error!");
             return;
         }
         // estrazione nominativo da URL
-        url = request.getRequestURL().toString();
+        
+        url = request.getRequestURL().toString();        
         url_section = url.split("/");
-        name = url_section[url_section.length - 1];
-        if (name == null) {
+        richiesta = url_section[url_section.length - 1];
+        
+        if (richiesta == null) {
             response.sendError(400, "Request syntax error!");
             return;
         }
-        if (name.isEmpty()) {
+        if (richiesta.isEmpty()) {
+            response.sendError(400, "Request syntax error!");
+            return;
+        }
+        if (richiesta.equals("spesa")) {
             response.sendError(400, "Request syntax error!");
             return;
         }
         try {
-            String descrizione = request.getParameter("descr");
-            String sql = "SELECT name, number";
-            if (descrizione != null && descrizione.equals("si"))
-                sql += ", description";
-            sql += " FROM Phonebook WHERE Name = '" + name + "';";
+            String sql = "SELECT idUtente, username, nome, cognome, codiceFiscale, regione, via, nCivico FROM utenti";
+            
+            String username = request.getParameter("username");
+            if (username != null){
+                sql += " WHERE username='"+username+"';";
+            }
+            String nome = request.getParameter("nome");
+            if (nome != null){
+                sql += " WHERE nome='"+nome+"';";
+            }
+            String cognome = request.getParameter("cognome");
+            if (cognome != null){
+                sql += " WHERE cognome='"+cognome+"';";
+            }
+            String regione = request.getParameter("regione");
+            if (regione != null){
+                sql += " WHERE regione='"+regione+"';";
+            }
+            
             // ricerca nominativo nel database
             Statement statement = spesa.createStatement();
             ResultSet result = statement.executeQuery(sql);
-            if (result.next()) {
-                number = result.getString(2);
-                if (descrizione != null && descrizione.equals("si")) {
-                    description = result.getString(3);
-                }
-                    
-            } else {
-                response.sendError(404, "Entry not found!");
-                result.close();
-                statement.close();
-                return;
+            
+            ArrayList<Utente> utenti = new ArrayList<Utente>(0);
+            while(result.next()){
+                String idUtente = result.getString("idUtente");
+                String Username = result.getString("username");
+                String Nome = result.getString("nome");
+                String Cognome = result.getString("cognome");
+                String CodiceFiscale = result.getString("codiceFiscale");
+                String Regione = result.getString("regione");
+                String Via = result.getString("via");
+                String nCivico = result.getString("nCivico");                
+                Utente u = new Utente(idUtente, Username, Nome, Cognome, CodiceFiscale, Regione, Via, nCivico);
+                utenti.add(u);
             }
             result.close();
             statement.close();
+            
             // scrittura del body della risposta
             response.setContentType("text/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             try {
                 out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-                out.println("<entry>");
-                out.print("<name>");
-                out.print(name);
-                out.println("</name>");
-                out.print("<number>");
-                out.print(number);
-                out.println("</number>");
-                
-                if (descrizione != null && descrizione.equals("si")) {
-                    out.print("<description>");
-                    out.print(description);
-                    out.println("</description>");
-                    
+                out.println("<elencoUtenti>");
+                if(utenti.size()>0){
+                    for(int i=0;i<utenti.size();i++){
+                        Utente u = utenti.get(i);
+                        out.println("<Utente>");
+                        out.println("<idUtente>"+ u.getIdUtente()+"</idUtente>");
+                        out.println("<username>"+ u.getUsername()+"</username>");
+                        out.println("<nome>"+ u.getNome()+"</nome>");
+                        out.println("<cognome>"+ u.getCognome()+"</cognome>");
+                        out.println("<codiceFiscale>"+ u.getCodiceFiscale()+"</codiceFiscale>");
+                        out.println("<regione>"+ u.getRegione()+"</regione>");
+                        out.println("<via>"+ u.getVia()+"</via>");
+                        out.println("<nCivico>"+ u.getnCivico()+"</nCivico>");
+                        out.println("</Utente>");
+                    }
                 }
-                out.println("</entry>");
+                out.println("</elencoUtenti>");
             } finally {
                 out.close();
             }
