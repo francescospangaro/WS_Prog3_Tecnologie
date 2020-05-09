@@ -101,31 +101,33 @@ public class WS_Spesa extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      *
-     * examples of use: 
-     *    http://localhost:8080/spesa/utenti
-     *    http://localhost:8080/spesa/utenti?username=fraGali
-     *    http://localhost:8080/spesa/utenti?nome=Francesco
-     *    http://localhost:8080/spesa/utenti?cognome=Caso
-     *    http://localhost:8080/spesa/utenti?regione=Lombardia
+     * //VISUALIZZAZIONE LISTA UTENTI examples of use:
+     * http://localhost:8080/spesa/utenti
+     * http://localhost:8080/spesa/utenti?username=fraGali
+     * http://localhost:8080/spesa/utenti?nome=Francesco
+     * http://localhost:8080/spesa/utenti?cognome=Caso
+     * http://localhost:8080/spesa/utenti?regione=Lombardia
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String richiesta;
         String url;
-        String[] url_section;        
-        
+        String[] url_section;
+
         // verifica stato connessione a DBMS
         if (!connected) {
             response.sendError(500, "DBMS server error!");
             return;
         }
         // estrazione nominativo da URL
-        
-        url = request.getRequestURL().toString();        
+
+        url = request.getRequestURL().toString();
         url_section = url.split("/");
         richiesta = url_section[url_section.length - 1];
-        
+
+        System.out.println("richiesta " + richiesta);
+
         if (richiesta == null) {
             response.sendError(400, "Request syntax error!");
             return;
@@ -140,30 +142,30 @@ public class WS_Spesa extends HttpServlet {
         }
         try {
             String sql = "SELECT idUtente, username, nome, cognome, codiceFiscale, regione, via, nCivico FROM utenti";
-            
+
             String username = request.getParameter("username");
-            if (username != null){
-                sql += " WHERE username='"+username+"';";
+            if (username != null) {
+                sql += " WHERE username='" + username + "';";
             }
             String nome = request.getParameter("nome");
-            if (nome != null){
-                sql += " WHERE nome='"+nome+"';";
+            if (nome != null) {
+                sql += " WHERE nome='" + nome + "';";
             }
             String cognome = request.getParameter("cognome");
-            if (cognome != null){
-                sql += " WHERE cognome='"+cognome+"';";
+            if (cognome != null) {
+                sql += " WHERE cognome='" + cognome + "';";
             }
             String regione = request.getParameter("regione");
-            if (regione != null){
-                sql += " WHERE regione='"+regione+"';";
+            if (regione != null) {
+                sql += " WHERE regione='" + regione + "';";
             }
-            
+
             // ricerca nominativo nel database
             Statement statement = spesa.createStatement();
             ResultSet result = statement.executeQuery(sql);
-            
+
             ArrayList<Utente> utenti = new ArrayList<Utente>(0);
-            while(result.next()){
+            while (result.next()) {
                 String idUtente = result.getString("idUtente");
                 String Username = result.getString("username");
                 String Nome = result.getString("nome");
@@ -171,39 +173,41 @@ public class WS_Spesa extends HttpServlet {
                 String CodiceFiscale = result.getString("codiceFiscale");
                 String Regione = result.getString("regione");
                 String Via = result.getString("via");
-                String nCivico = result.getString("nCivico");                
+                String nCivico = result.getString("nCivico");
                 Utente u = new Utente(idUtente, Username, Nome, Cognome, CodiceFiscale, Regione, Via, nCivico);
                 utenti.add(u);
             }
             result.close();
             statement.close();
-            
+
             // scrittura del body della risposta
             response.setContentType("text/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             try {
                 out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                 out.println("<elencoUtenti>");
-                if(utenti.size()>0){
-                    for(int i=0;i<utenti.size();i++){
+                if (utenti.size() > 0) {
+                    for (int i = 0; i < utenti.size(); i++) {
                         Utente u = utenti.get(i);
                         out.println("<Utente>");
-                        out.println("<idUtente>"+ u.getIdUtente()+"</idUtente>");
-                        out.println("<username>"+ u.getUsername()+"</username>");
-                        out.println("<nome>"+ u.getNome()+"</nome>");
-                        out.println("<cognome>"+ u.getCognome()+"</cognome>");
-                        out.println("<codiceFiscale>"+ u.getCodiceFiscale()+"</codiceFiscale>");
-                        out.println("<regione>"+ u.getRegione()+"</regione>");
-                        out.println("<via>"+ u.getVia()+"</via>");
-                        out.println("<nCivico>"+ u.getnCivico()+"</nCivico>");
+                        out.println("<idUtente>" + u.getIdUtente() + "</idUtente>");
+                        out.println("<username>" + u.getUsername() + "</username>");
+                        out.println("<nome>" + u.getNome() + "</nome>");
+                        out.println("<cognome>" + u.getCognome() + "</cognome>");
+                        out.println("<codiceFiscale>" + u.getCodiceFiscale() + "</codiceFiscale>");
+                        out.println("<regione>" + u.getRegione() + "</regione>");
+                        out.println("<via>" + u.getVia() + "</via>");
+                        out.println("<nCivico>" + u.getnCivico() + "</nCivico>");
                         out.println("</Utente>");
                     }
+                    utenti = new ArrayList<Utente>(0);
                 }
                 out.println("</elencoUtenti>");
             } finally {
                 out.close();
             }
             response.setStatus(200); // OK
+
         } catch (SQLException e) {
             response.sendError(500, "DBMS server error!");
         }
@@ -211,6 +215,14 @@ public class WS_Spesa extends HttpServlet {
 
     /**
      * Handles the HTTP <code>POST</code> method.
+     *
+     * INSERIMENTO RISPOSTA AD UNA RISCHIESTA DI SPESA in body risposta
+     * POST spesa/risposte
+     * 
+     * <risposta>
+     * <idUtente>1</idUtente>
+     * <idRichiesta>2</idRichiesta>
+     * </risposta>
      *
      * @param request servlet request
      * @param response servlet response
@@ -229,9 +241,9 @@ public class WS_Spesa extends HttpServlet {
             return;
         }
         try {
-            // scrittura nel file "entry.xml" del body della richiesta
+            // scrittura nel file "risposta.xml" del body della richiesta
             BufferedReader input = request.getReader();
-            BufferedWriter file = new BufferedWriter(new FileWriter("entry.xml"));
+            BufferedWriter file = new BufferedWriter(new FileWriter("risposta.xml"));
             while ((line = input.readLine()) != null) {
                 file.write(line);
                 file.newLine();
@@ -239,34 +251,36 @@ public class WS_Spesa extends HttpServlet {
             input.close();
             file.flush();
             file.close();
-            // estrazione dei valori degli elementi "name" e "number" dal file "entry.xml"
+            // estrazione dei valori degli elementi "idUtente" e "idRichiesta" dal file "risposta.xml"
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse("entry.xml");
+            Document document = builder.parse("risposta.xml");
             Element root = document.getDocumentElement();
-            NodeList list = root.getElementsByTagName("name");
-            String name = null;
+
+            NodeList list = root.getElementsByTagName("idUtente");
+            String idUtente = null;
             if (list != null && list.getLength() > 0) {
-                name = list.item(0).getFirstChild().getNodeValue();
+                idUtente = list.item(0).getFirstChild().getNodeValue();
             }
-            list = root.getElementsByTagName("number");
-            String number = null;
+
+            list = root.getElementsByTagName("idRichiesta");
+            String idRichiesta = null;
             if (list != null && list.getLength() > 0) {
-                number = list.item(0).getFirstChild().getNodeValue();
+                idRichiesta = list.item(0).getFirstChild().getNodeValue();
             }
-            if (name == null || number == null) {
+            if (idUtente == null || idRichiesta == null) {
                 response.sendError(400, "Malformed XML!");
                 return;
             }
-            if (name.isEmpty() || number.isEmpty()) {
+            if (idUtente.isEmpty() || idRichiesta.isEmpty()) {
                 response.sendError(400, "Malformed XML!");
                 return;
             }
             try {
                 // aggiunta voce nel database
                 Statement statement = spesa.createStatement();
-                if (statement.executeUpdate("INSERT Phonebook(Name, Number) VALUES('" + name + "', '" + number + "');") <= 0) {
-                    response.sendError(403, "Name exist!");
+                if (statement.executeUpdate("INSERT risposte(rifUtente, rifRichiesta) VALUES(" + idUtente + ", " + idRichiesta + ");") <= 0) {
+                    response.sendError(403, "Risposta exist!");
                     statement.close();
                     return;
                 }
@@ -275,7 +289,7 @@ public class WS_Spesa extends HttpServlet {
                 response.sendError(500, "DBMS server error!");
                 return;
             }
-            response.setStatus(201); // OK
+            response.setStatus(200); // OK
         } catch (ParserConfigurationException e) {
             response.sendError(500, "XML parser error!");
         } catch (SAXException e) {
@@ -283,9 +297,33 @@ public class WS_Spesa extends HttpServlet {
         }
     }
 
-    // richiesta PUT
+    /**
+     * Handles the HTTP <code>PUT</code> method.
+     *
+     * AGGIORNAMENTO DI UN UTENTE con idUtente nell'url e nel body xmlUtente
+     *
+     * PUT spesa/utenti/1
+     *
+     * body examples
+     * <utente>
+     * <idUtente>1</idUtente>
+     * <username>fraGali</username>
+     * <nome>Francesco</nome>
+     * <cognome>Galimberti</cognome>
+     * <codiceFiscale>GLMFNC01A02B729Q</codiceFiscale>
+     * <regione>Lombardia</regione>
+     * <via>Giacomo Leopardi</via>
+     * <nCivico>5</nCivico>
+     * </utente>
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String url_name;
+        String url_idUtente;
         String url;
         String line;
         String[] url_section;
@@ -298,19 +336,23 @@ public class WS_Spesa extends HttpServlet {
         // estrazione nominativo da URL
         url = request.getRequestURL().toString();
         url_section = url.split("/");
-        url_name = url_section[url_section.length - 1];
-        if (url_name == null) {
+        url_idUtente = url_section[url_section.length - 1];
+        if (url_idUtente == null) {
             response.sendError(400, "Request syntax error!");
             return;
         }
-        if (url_name.isEmpty()) {
+        if (url_idUtente.isEmpty()) {
+            response.sendError(400, "Request syntax error!");
+            return;
+        }
+        if (url_idUtente.equals("spesa") || url_idUtente.equals("utenti")) {
             response.sendError(400, "Request syntax error!");
             return;
         }
         try {
-            // scrittura nel file "entry.xml" del body della richiesta
+            // scrittura nel file "utente.xml" del body della richiesta
             BufferedReader input = request.getReader();
-            BufferedWriter file = new BufferedWriter(new FileWriter("entry.xml"));
+            BufferedWriter file = new BufferedWriter(new FileWriter("utente.xml"));
             while ((line = input.readLine()) != null) {
                 file.write(line);
                 file.newLine();
@@ -318,37 +360,31 @@ public class WS_Spesa extends HttpServlet {
             input.close();
             file.flush();
             file.close();
-            // estrazione dei valori degli elementi "name" e "number" dal file "entry.xml"
+            // estrazione dei valori dell'utente dal file "utente.xml"
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse("entry.xml");
+            Document document = builder.parse("utente.xml");
+
             Element root = document.getDocumentElement();
-            NodeList list = root.getElementsByTagName("name");
-            String name = null;
-            if (list != null && list.getLength() > 0) {
-                name = list.item(0).getFirstChild().getNodeValue();
-            }
-            list = root.getElementsByTagName("number");
-            String number = null;
-            if (list != null && list.getLength() > 0) {
-                number = list.item(0).getFirstChild().getNodeValue();
-            }
-            if (name == null || number == null) {
+            Utente u = getUtente(root);
+            
+            if (u.getIdUtente() == null || u.getNome() == null || u.getCognome() == null || u.getCognome() == null || u.getCodiceFiscale() == null || u.getRegione() == null || u.getnCivico() == null || u.getVia() == null || u.getUsername() == null) {
                 response.sendError(400, "Malformed XML!");
                 return;
             }
-            if (name.isEmpty() || number.isEmpty()) {
+            if (u.getIdUtente().isEmpty() || u.getNome().isEmpty() || u.getCognome().isEmpty() || u.getCognome().isEmpty() || u.getCodiceFiscale().isEmpty() || u.getRegione().isEmpty() || u.getnCivico().isEmpty() || u.getVia().isEmpty() || u.getUsername().isEmpty()) {
                 response.sendError(400, "Malformed XML!");
                 return;
             }
-            if (!name.equalsIgnoreCase(url_name)) {
-                response.sendError(400, "URL name mismtach XML name!");
+            if (!u.getIdUtente().equalsIgnoreCase(url_idUtente)) {
+                response.sendError(400, "URL idUtente mismtach XML idUtente!");
                 return;
             }
             try {
                 Statement statement = spesa.createStatement();
-                if (statement.executeUpdate("UPDATE Phonebook SET Number='" + number + "'WHERE Name = '" + name + "';") <= 0) {
-                    response.sendError(404, "Entry not found!");
+                String sql="UPDATE utenti SET username='" + u.getUsername() + "', nome='" + u.getNome() + "', cognome='" + u.getCognome() + "', codiceFiscale='" + u.getCodiceFiscale() + "', regione='" + u.getRegione() + "', via='" + u.getVia() + "', nCivico='" + u.getnCivico() + "' WHERE idUtente = " + u.getIdUtente() + ";";
+                if (statement.executeUpdate(sql) <= 0) {
+                    response.sendError(404, "idUtente not found!");
                     statement.close();
                     return;
                 }
@@ -357,7 +393,7 @@ public class WS_Spesa extends HttpServlet {
                 response.sendError(500, "DBMS server error!");
                 return;
             }
-            response.setStatus(204); // OK
+            response.setStatus(200); // OK
         } catch (ParserConfigurationException e) {
             response.sendError(500, "XML parser error!");
         } catch (SAXException e) {
@@ -365,9 +401,44 @@ public class WS_Spesa extends HttpServlet {
         }
     }
 
-    // richiesta DELETE
+    private Utente getUtente(Element root) {
+        String idUtente = getTextValue(root,"idUtente");
+        String Username = getTextValue(root,"username");
+        String Nome = getTextValue(root,"nome");
+        String Cognome = getTextValue(root,"cognome");
+        String CodiceFiscale = getTextValue(root,"codiceFiscale");
+        String Regione = getTextValue(root,"regione");
+        String Via = getTextValue(root,"via");
+        String nCivico = getTextValue(root,"nCivico");
+        Utente u = new Utente(idUtente, Username, Nome, Cognome, CodiceFiscale, Regione, Via, nCivico);
+        return u;
+    }
+    
+    private String getTextValue(Element element, String tag) {
+        String value = null;
+        NodeList nodelist;
+        nodelist = element.getElementsByTagName(tag);
+        if (nodelist != null && nodelist.getLength() > 0) {
+            value = nodelist.item(0).getFirstChild().getNodeValue();
+        }
+        return value;
+    }
+
+    /**
+     * Handles the HTTP <code>DELETE</code> method.
+     *
+     * ELIMINAZIONE DI UNA RICHIESTA DI SPESA con idRichiesta nell'url
+     *
+     * DELETE spesa/richieste/1
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name;
+        String url_idRichiesta;
         String url;
         String[] url_section;
 
@@ -379,24 +450,29 @@ public class WS_Spesa extends HttpServlet {
         // estrazione nominativo da URL
         url = request.getRequestURL().toString();
         url_section = url.split("/");
-        name = url_section[url_section.length - 1];
-        if (name == null) {
+        url_idRichiesta = url_section[url_section.length - 1];
+        if (url_idRichiesta == null) {
             response.sendError(400, "Request syntax error!");
             return;
         }
-        if (name.isEmpty()) {
+        if (url_idRichiesta.isEmpty()) {
+            response.sendError(400, "Request syntax error!");
+            return;
+        }
+        if (url_idRichiesta.equals("spesa") || url_idRichiesta.equals("richieste")) {
             response.sendError(400, "Request syntax error!");
             return;
         }
         try {
             Statement statement = spesa.createStatement();
-            if (statement.executeUpdate("DELETE FROM Phonebook WHERE Name = '" + name + "';") <= 0) {
-                response.sendError(404, "Entry not found!");
+            String sql = "DELETE FROM richieste WHERE idRichiesta = " + url_idRichiesta + ";";
+            if (statement.executeUpdate(sql) <= 0) {
+                response.sendError(404, "idRichiesta not found!");
                 statement.close();
                 return;
             }
             statement.close();
-            response.setStatus(204); // OK
+            response.setStatus(200); // OK
         } catch (SQLException e) {
             response.sendError(500, "DBMS server error!");
             return;
