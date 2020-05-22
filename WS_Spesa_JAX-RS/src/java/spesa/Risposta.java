@@ -10,10 +10,10 @@ package spesa;
  * @author Galimberti Francesco
  */
 public class Risposta {
-    
     private String idUtente;
     private String idRichiesta;
 
+    
     public Risposta(String idUtente, String idRichiesta) {
         this.idUtente = idUtente;
         this.idRichiesta = idRichiesta;
@@ -39,5 +39,7 @@ public class Risposta {
     public void setIdRichiesta(String idRichiesta) {
         this.idRichiesta = idRichiesta;
     }
+    
+    
     
 }
