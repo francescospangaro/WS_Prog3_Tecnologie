@@ -29,7 +29,7 @@ public class MyParser {
 
         return u;
     }
-
+    
     public Risposta parseFileRisposta(String filename) throws ParserConfigurationException, SAXException, IOException {
 
         
@@ -56,6 +56,7 @@ public class MyParser {
         return r;
     }
 
+    
     /*public Richiesta parseRichiesta(String filename) throws ParserConfigurationException, SAXException, IOException {
 
         DocumentBuilderFactory factory;

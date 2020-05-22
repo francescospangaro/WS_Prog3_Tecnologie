@@ -8,37 +8,23 @@ package spesa;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Produces;
-import javax.ws.rs.GET;
-import static javax.ws.rs.HttpMethod.POST;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.*;
+import javax.ws.rs.*;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 /**
  * REST Web Service
  *
  * @author Galimberti Francesco
  */
-@ApplicationPath("/")
-@Path("spesa")
-public class Api {
+@ApplicationPath("")
+@Path("")
+public class Api extends Application{
 
     final private String driver = "com.mysql.jdbc.Driver";
     final private String dbms_url = "jdbc:mysql://localhost/";
@@ -48,16 +34,7 @@ public class Api {
     private Connection spesaDatabase;
     private boolean connected;
 
-    @Context
-    private UriInfo context;
-
-    /**
-     * Creates a new instance of Calcolatrice
-     */
-    public Api() {
-    }
-
-    // attivazione (connessione a DBMS)
+    // attivazione servlet (connessione a DBMS)
     public void init() {
         String url = dbms_url + database;
         try {
@@ -71,12 +48,31 @@ public class Api {
         }
     }
 
-    // disattivazione (disconnessione da DBMS)
+    // disattivazione servlet (disconnessione da DBMS)
     public void destroy() {
         try {
             spesaDatabase.close();
         } catch (SQLException e) {
         }
+    }
+
+    @Context
+    private UriInfo context;
+
+    /**
+     * Creates a new instance of Api
+     */
+    public Api() {
+        super();
+    }
+    
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("prova")
+    public Response getMessage() {
+        Response r = Response.ok("test with GET")
+                             .build();
+        return r;
     }
 
     /*
@@ -88,39 +84,42 @@ public class Api {
      */
     @GET
     @Produces(MediaType.TEXT_XML)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Path("utenti")
-    public String getUtenti(@PathParam(value = "utenti") String utenti,
-            @QueryParam("username") String username,
-            @QueryParam("nome") String nome,
-            @QueryParam("cognome") String cognome,
-            @QueryParam("regione") String regione) {
+    public Response getUtenti(@PathParam(value = "utenti") String utenti,
+            @DefaultValue("null") @QueryParam("username") String username,
+            @DefaultValue("null") @QueryParam("nome") String nome,
+            @DefaultValue("null") @QueryParam("cognome") String cognome,
+            @DefaultValue("null") @QueryParam("regione") String regione) {
 
         init();
         String output = "";
+        Response r;
 
         // verifica stato connessione a DBMS
         if (!connected) {
 
-            return "<errorMessage>500</errorMessage>";
+            r = Response.serverError().build();
+            return r;
 
         } else {
 
             try {
                 String sql = "SELECT idUtente, username, nome, cognome, codiceFiscale, regione, via, nCivico FROM utenti";
 
-                if (username != null) {
+                if (!username.equalsIgnoreCase("null")) {
                     sql += " WHERE username='" + username + "';";
                 }
 
-                if (nome != null) {
+                if (!nome.equalsIgnoreCase("null")) {
                     sql += " WHERE nome='" + nome + "';";
                 }
 
-                if (cognome != null) {
+                if (!cognome.equalsIgnoreCase("null")) {
                     sql += " WHERE cognome='" + cognome + "';";
                 }
 
-                if (regione != null) {
+                if (!regione.equalsIgnoreCase("null")) {
                     sql += " WHERE regione='" + regione + "';";
                 }
 
@@ -163,14 +162,18 @@ public class Api {
                     utentiList = new ArrayList<Utente>(0);
                 }
                 output += "</elencoUtenti>";
-
+                destroy();
+                
+                r = Response.ok(output).build();
+                return r;
+                
             } catch (SQLException ex) {
                 Logger.getLogger(Api.class.getName()).log(Level.SEVERE, null, ex);
                 destroy();
-                return "<errorMessage>500</errorMessage>";
-            }
-            destroy();
-            return output;
+                r = Response.serverError().build();
+                return r;
+            }   
+            
         }
     }
 
@@ -180,24 +183,20 @@ public class Api {
      * PUT spesa/utenti/1
      *
      * body examples
-     * <utente>
-     * <idUtente>1</idUtente>
-     * <username>fraGali</username>
-     * <nome>Francesco</nome>
-     * <cognome>Galimberti</cognome>
-     * <codiceFiscale>GLMFNC01A02B729Q</codiceFiscale>
-     * <regione>Lombardia</regione>
-     * <via>Giacomo Leopardi</via>
-     * <nCivico>5</nCivico>
-     * </utente>
-     *
-     * @param idUtente
-     * @param content
-     * @return
+      <utente>
+      <idUtente>1</idUtente>
+      <username>fraGali</username>
+      <nome>Francesco</nome>
+      <cognome>Galimberti</cognome>
+      <codiceFiscale>GLMFNC01A02B729Q</codiceFiscale>
+      <regione>Lombardia</regione>
+      <via>Giacomo Leopardi</via>
+      <nCivico>5</nCivico>
+      </utente>
      */
     @PUT
     @Path("utenti/{idUtente}")
-    @Consumes(MediaType.TEXT_XML)
+    @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_XML})
     protected String putUtente(@PathParam("idUtente") String idUtente,
             String content) {
         // verifica stato connessione a DBMS
