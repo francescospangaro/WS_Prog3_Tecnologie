@@ -12,11 +12,12 @@ package spesa;
 public class Risposta {
     private String idUtente;
     private String idRichiesta;
-
+    private String idRisposta;
     
-    public Risposta(String idUtente, String idRichiesta) {
+    public Risposta(String idUtente, String idRichiesta, String idRisposta) {
         this.idUtente = idUtente;
         this.idRichiesta = idRichiesta;
+        this.idRisposta = idRisposta;
     }
     
     public Risposta() {
@@ -38,6 +39,14 @@ public class Risposta {
 
     public void setIdRichiesta(String idRichiesta) {
         this.idRichiesta = idRichiesta;
+    }
+
+    public String getIdRisposta() {
+        return idRisposta;
+    }
+
+    public void setIdRisposta(String idRisposta) {
+        this.idRisposta = idRisposta;
     }
     
     
